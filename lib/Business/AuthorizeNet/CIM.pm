@@ -1,7 +1,7 @@
 package Business::AuthorizeNet::CIM;
 
 BEGIN {
-    $Business::AuthorizeNet::CIM::VERSION = '0.01';
+    $Business::AuthorizeNet::CIM::VERSION = '0.02';
 }
 
 # ABSTRACT: Authorize.Net Customer Information Manager (CIM) Web Services API
@@ -811,7 +811,7 @@ Business::AuthorizeNet::CIM - Authorize.Net Customer Information Manager (CIM) W
 
 =head1 VERSION
 
-version 0.01
+version 0.02
 
 =head1 SYNOPSIS
 
@@ -819,17 +819,16 @@ version 0.01
     use Data::Dumper;
     
     my $cim = Business::AuthorizeNet::CIM->new( login => $cfg{login}, transactionKey => $cfg{password} );
-    my $d = $cim->getCustomerProfileIds();
-    my $id_num = $d->{ids}->{numericString};
-    my @ids = ref($id_num) eq 'ARRAY' ? @$id_num : ($id_num);
-    foreach my $id (@ids) {
+
+    my @ProfileIds = $cim->getCustomerProfileIds();
+    foreach my $id (@ProfileIds) {
         my $d = $cim->getCustomerProfile($id);
         print Dumper(\$d);
     }
 
 =head1 DESCRIPTION
 
-Sample code for L<http://developer.authorize.net/api/cim/>
+Authorize.Net Customer Information Manager (CIM) Web Services API for L<http://developer.authorize.net/api/cim/>, read L<http://www.authorize.net/support/CIM_XML_guide.pdf> for more details.
 
 =head2 METHODS
 

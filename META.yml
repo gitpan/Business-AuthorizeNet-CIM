@@ -18,4 +18,4 @@ requires:
   XML::Writer: 0
 resources:
   repository: http://github.com/fayland/perl-Business-AuthorizeNet-CIM
-version: 0.01
+version: 0.02

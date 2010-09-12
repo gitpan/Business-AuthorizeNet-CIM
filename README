@@ -3,23 +3,24 @@ NAME
     (CIM) Web Services API
 
 VERSION
-    version 0.01
+    version 0.02
 
 SYNOPSIS
         use Business::AuthorizeNet::CIM;
         use Data::Dumper;
         
     my $cim = Business::AuthorizeNet::CIM->new( login => $cfg{login}, transactionKey => $cfg{password} );
-        my $d = $cim->getCustomerProfileIds();
-        my $id_num = $d->{ids}->{numericString};
-        my @ids = ref($id_num) eq 'ARRAY' ? @$id_num : ($id_num);
-        foreach my $id (@ids) {
+
+        my @ProfileIds = $cim->getCustomerProfileIds();
+        foreach my $id (@ProfileIds) {
             my $d = $cim->getCustomerProfile($id);
             print Dumper(\$d);
         }
 
 DESCRIPTION
-    Sample code for <http://developer.authorize.net/api/cim/>
+    Authorize.Net Customer Information Manager (CIM) Web Services API for
+    <http://developer.authorize.net/api/cim/>, read
+    <http://www.authorize.net/support/CIM_XML_guide.pdf> for more details.
 
   METHODS
    CONSTRUCTION
