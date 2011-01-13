@@ -1,11 +1,13 @@
-#!perl -T
+#!perl
 
-use Test::More tests => 1;
+use strict;
+use warnings;
 
-BEGIN {
-    use_ok('Business::AuthorizeNet::CIM');
-}
+use Test::More;
 
-diag(
-"Testing Business::AuthorizeNet::CIM $Business::AuthorizeNet::CIM::VERSION, Perl $], $^X"
-);
+
+
+  plan tests => 1;
+
+use_ok('Business::AuthorizeNet::CIM');
+diag("Testing Business::AuthorizeNet::CIM $Business::AuthorizeNet::CIM::VERSION, Perl $], $^X");

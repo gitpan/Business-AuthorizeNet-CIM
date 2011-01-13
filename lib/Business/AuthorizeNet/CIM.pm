@@ -1,7 +1,7 @@
 package Business::AuthorizeNet::CIM;
 
 BEGIN {
-    $Business::AuthorizeNet::CIM::VERSION = '0.02';
+    $Business::AuthorizeNet::CIM::VERSION = '0.03';
 }
 
 # ABSTRACT: Authorize.Net Customer Information Manager (CIM) Web Services API
@@ -471,10 +471,6 @@ sub getCustomerProfileIds {
     $writer->dataElement( 'name',           $self->{login} );
     $writer->dataElement( 'transactionKey', $self->{transactionKey} );
     $writer->endTag('merchantAuthentication');
-
-    if ( $self->{test_mode} ) {
-        $writer->dataElement( 'validationMode', 'testMode' );
-    }
     $writer->endTag('getCustomerProfileIdsRequest');
 
     $xml = '<?xml version="1.0" encoding="utf-8"?>' . "\n" . $xml;
@@ -502,10 +498,6 @@ sub getCustomerProfile {
     $writer->dataElement( 'transactionKey', $self->{transactionKey} );
     $writer->endTag('merchantAuthentication');
     $writer->dataElement( 'customerProfileId', $customerProfileId );
-
-    if ( $self->{test_mode} ) {
-        $writer->dataElement( 'validationMode', 'testMode' );
-    }
     $writer->endTag('getCustomerProfileRequest');
 
     $xml = '<?xml version="1.0" encoding="utf-8"?>' . "\n" . $xml;
@@ -811,7 +803,7 @@ Business::AuthorizeNet::CIM - Authorize.Net Customer Information Manager (CIM) W
 
 =head1 VERSION
 
-version 0.02
+version 0.03
 
 =head1 SYNOPSIS
 
@@ -1235,7 +1227,7 @@ Fayland Lam <fayland@gmail.com>
 
 =head1 COPYRIGHT AND LICENSE
 
-This software is copyright (c) 2010 by Fayland Lam.
+This software is copyright (c) 2011 by Fayland Lam.
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.

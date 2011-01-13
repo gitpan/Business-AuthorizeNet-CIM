@@ -1,0 +1,40 @@
+{
+   "abstract" : "Authorize.Net Customer Information Manager (CIM) Web Services API",
+   "author" : [
+      "Fayland Lam <fayland@gmail.com>"
+   ],
+   "dynamic_config" : 0,
+   "generated_by" : "Dist::Zilla version 4.200000, CPAN::Meta::Converter version 2.102400",
+   "license" : [
+      "perl_5"
+   ],
+   "meta-spec" : {
+      "url" : "http://search.cpan.org/perldoc?CPAN::Meta::Spec",
+      "version" : "2"
+   },
+   "name" : "Business-AuthorizeNet-CIM",
+   "prereqs" : {
+      "configure" : {
+         "requires" : {
+            "ExtUtils::MakeMaker" : "6.31"
+         }
+      },
+      "runtime" : {
+         "requires" : {
+            "LWP::UserAgent" : 0,
+            "XML::Simple" : 0,
+            "XML::Writer" : 0
+         }
+      }
+   },
+   "release_status" : "stable",
+   "resources" : {
+      "repository" : {
+         "type" : "git",
+         "url" : "git://github.com/fayland/perl-Business-AuthorizeNet-CIM.git",
+         "web" : "http://github.com/fayland/perl-Business-AuthorizeNet-CIM"
+      }
+   },
+   "version" : "0.03"
+}
+
