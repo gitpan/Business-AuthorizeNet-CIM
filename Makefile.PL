@@ -4,29 +4,29 @@ use warnings;
 
 
 
-use ExtUtils::MakeMaker 6.31;
+use ExtUtils::MakeMaker 6.30;
 
 
 
 my %WriteMakefileArgs = (
-  'ABSTRACT' => 'Authorize.Net Customer Information Manager (CIM) Web Services API',
-  'AUTHOR' => 'Fayland Lam <fayland@gmail.com>',
-  'BUILD_REQUIRES' => {},
-  'CONFIGURE_REQUIRES' => {
-    'ExtUtils::MakeMaker' => '6.31'
+  "ABSTRACT" => "Authorize.Net Customer Information Manager (CIM) Web Services API",
+  "AUTHOR" => "Fayland Lam <fayland\@gmail.com>",
+  "BUILD_REQUIRES" => {},
+  "CONFIGURE_REQUIRES" => {
+    "ExtUtils::MakeMaker" => "6.30"
   },
-  'DISTNAME' => 'Business-AuthorizeNet-CIM',
-  'EXE_FILES' => [],
-  'LICENSE' => 'perl',
-  'NAME' => 'Business::AuthorizeNet::CIM',
-  'PREREQ_PM' => {
-    'LWP::UserAgent' => '0',
-    'XML::Simple' => '0',
-    'XML::Writer' => '0'
+  "DISTNAME" => "Business-AuthorizeNet-CIM",
+  "EXE_FILES" => [],
+  "LICENSE" => "perl",
+  "NAME" => "Business::AuthorizeNet::CIM",
+  "PREREQ_PM" => {
+    "LWP::UserAgent" => 0,
+    "XML::Simple" => 0,
+    "XML::Writer" => 0
   },
-  'VERSION' => '0.04',
-  'test' => {
-    'TESTS' => 't/*.t'
+  "VERSION" => "0.05",
+  "test" => {
+    "TESTS" => "t/*.t"
   }
 );
 

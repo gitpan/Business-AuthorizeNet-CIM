@@ -3,7 +3,7 @@ NAME
     (CIM) Web Services API
 
 VERSION
-    version 0.04
+    version 0.05
 
 SYNOPSIS
         use Business::AuthorizeNet::CIM;

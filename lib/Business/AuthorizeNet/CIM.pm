@@ -1,7 +1,6 @@
 package Business::AuthorizeNet::CIM;
-
-BEGIN {
-    $Business::AuthorizeNet::CIM::VERSION = '0.04';
+{
+    $Business::AuthorizeNet::CIM::VERSION = '0.05';
 }
 
 # ABSTRACT: Authorize.Net Customer Information Manager (CIM) Web Services API
@@ -478,9 +477,13 @@ sub getCustomerProfileIds {
       ->post( $self->{url}, Content => $xml, 'Content-Type' => 'text/xml' );
     print "<!-- " . $resp->content . " -->\n\n" if $self->{debug};
 
-    my $d      = XMLin( $resp->content, SuppressEmpty => '' );
+    my $d = XMLin( $resp->content, SuppressEmpty => '' );
     my $id_num = $d->{ids}->{numericString};
-    my @ids    = ref($id_num) eq 'ARRAY' ? @$id_num : ($id_num);
+    my @ids =
+        ref($id_num) eq 'ARRAY' ? @$id_num
+      : defined $id_num ? ($id_num)
+      :                   ();
+
     return @ids;
 }
 
@@ -792,6 +795,7 @@ sub validateCustomerPaymentProfile {
 }
 
 1;
+
 __END__
 
 =pod
@@ -802,7 +806,7 @@ Business::AuthorizeNet::CIM - Authorize.Net Customer Information Manager (CIM) W
 
 =head1 VERSION
 
-version 0.04
+version 0.05
 
 =head1 SYNOPSIS
 
