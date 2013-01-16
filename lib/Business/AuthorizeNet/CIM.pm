@@ -1,6 +1,6 @@
 package Business::AuthorizeNet::CIM;
 {
-    $Business::AuthorizeNet::CIM::VERSION = '0.06';
+    $Business::AuthorizeNet::CIM::VERSION = '0.07';
 }
 
 # ABSTRACT: Authorize.Net Customer Information Manager (CIM) Web Services API
@@ -35,6 +35,15 @@ sub new {
     bless $args, $class;
 }
 
+sub _need_payment_profiles_section {
+    my ( $self, $args ) = @_;
+    return
+         exists $args->{billTo}
+      || exists $args->{creditCard}
+      || exists $args->{bankAccount}
+      || ( $args->{use_shipToList_as_billTo} and $args->{shipToList} );
+}
+
 sub createCustomerProfile {
     my $self = shift;
     my $args = scalar @_ % 2 ? shift : {@_};
@@ -54,53 +63,57 @@ sub createCustomerProfile {
         $writer->dataElement( $k, $args->{$k} )
           if exists $args->{$k};
     }
-    $writer->startTag('paymentProfiles');
-    $writer->dataElement( 'customerType', $args->{'customerType'} )
-      if exists $args->{'customerType'};
 
-    my @flds = (
-        'firstName',   'lastName', 'company', 'address',
-        'city',        'state',    'zip',     'country',
-        'phoneNumber', 'faxNumber'
+    my @flds = qw(
+      firstName lastName company address city state zip country
+      phoneNumber faxNumber
     );
-    if ( exists $args->{billTo}
-        or ( $args->{use_shipToList_as_billTo} and $args->{shipToList} ) )
-    {
-        my $addr =
-          exists $args->{billTo} ? $args->{billTo} : $args->{shipToList};
-        $writer->startTag('billTo');
-        foreach my $k (@flds) {
-            $writer->dataElement( $k, $addr->{$k} )
-              if exists $addr->{$k};
-        }
-        $writer->endTag('billTo');
-    }
 
-    $writer->startTag('payment');
+    my $need_payment_profiles = $self->_need_payment_profiles_section($args);
+    if ($need_payment_profiles) {
+        $writer->startTag('paymentProfiles');
+        $writer->dataElement( 'customerType', $args->{'customerType'} )
+          if exists $args->{'customerType'};
 
-    if ( exists $args->{creditCard} ) {
-        $writer->startTag('creditCard');
-        foreach my $k ( 'cardNumber', 'expirationDate', 'cardCode' ) {
-            $writer->dataElement( $k, $args->{creditCard}->{$k} )
-              if exists $args->{creditCard}->{$k};
-        }
-        $writer->endTag('creditCard');
-    }
-    if ( exists $args->{bankAccount} ) {
-        $writer->startTag('bankAccount');
-        foreach my $k (
-            'accountType',   'routingNumber',
-            'accountNumber', 'nameOnAccount',
-            'echeckType',    'bankName'
-          )
+        if ( exists $args->{billTo}
+            or ( $args->{use_shipToList_as_billTo} and $args->{shipToList} ) )
         {
-            $writer->dataElement( $k, $args->{bankAccount}->{$k} );
+            my $addr =
+              exists $args->{billTo} ? $args->{billTo} : $args->{shipToList};
+            $writer->startTag('billTo');
+            foreach my $k (@flds) {
+                $writer->dataElement( $k, $addr->{$k} )
+                  if exists $addr->{$k};
+            }
+            $writer->endTag('billTo');
         }
-        $writer->endTag('bankAccount');
-    }
 
-    $writer->endTag('payment');
-    $writer->endTag('paymentProfiles');
+        $writer->startTag('payment');
+
+        if ( exists $args->{creditCard} ) {
+            $writer->startTag('creditCard');
+            foreach my $k ( 'cardNumber', 'expirationDate', 'cardCode' ) {
+                $writer->dataElement( $k, $args->{creditCard}->{$k} )
+                  if exists $args->{creditCard}->{$k};
+            }
+            $writer->endTag('creditCard');
+        }
+        if ( exists $args->{bankAccount} ) {
+            $writer->startTag('bankAccount');
+            foreach my $k (
+                'accountType',   'routingNumber',
+                'accountNumber', 'nameOnAccount',
+                'echeckType',    'bankName'
+              )
+            {
+                $writer->dataElement( $k, $args->{bankAccount}->{$k} );
+            }
+            $writer->endTag('bankAccount');
+        }
+
+        $writer->endTag('payment');
+        $writer->endTag('paymentProfiles');
+    }
 
     if ( exists $args->{shipToList}
         or ( $args->{use_billTo_as_shipToList} and $args->{billTo} ) )
@@ -116,7 +129,7 @@ sub createCustomerProfile {
     }
 
     $writer->endTag('profile');
-    if ( $self->{test_mode} ) {
+    if ( $need_payment_profiles && $self->{test_mode} ) {
         $writer->dataElement( 'validationMode', 'testMode' );
     }
     $writer->endTag('createCustomerProfileRequest');
@@ -289,8 +302,8 @@ sub createCustomerProfileTransaction {
           ( ref( $args->{lineItems} ) eq 'ARRAY' )
           ? @{ $args->{lineItems} }
           : ( $args->{lineItems} );
-        $writer->startTag('lineItems');
         foreach my $lineItem (@lineItems) {
+            $writer->startTag('lineItems');
             foreach my $k (
                 'itemId',    'name', 'description', 'quantity',
                 'unitPrice', 'taxable'
@@ -299,8 +312,8 @@ sub createCustomerProfileTransaction {
                 $writer->dataElement( $k, $lineItem->{$k} )
                   if exists $lineItem->{$k};
             }
+            $writer->endTag('lineItems');
         }
-        $writer->endTag('lineItems');
     }
 
     $writer->dataElement( 'customerProfileId', $args->{customerProfileId} );
@@ -348,7 +361,7 @@ sub createCustomerProfileTransaction {
       if exists $args->{splitTenderId};
     $writer->dataElement( 'approvalCode', $args->{approvalCode} )
       if exists $args->{approvalCode}
-          and $trans_type eq 'profileTransCaptureOnly';
+      and $trans_type eq 'profileTransCaptureOnly';
 
     $writer->endTag($trans_type);
     $writer->endTag('transaction');
@@ -809,13 +822,13 @@ Business::AuthorizeNet::CIM - Authorize.Net Customer Information Manager (CIM) W
 
 =head1 VERSION
 
-version 0.06
+version 0.07
 
 =head1 SYNOPSIS
 
     use Business::AuthorizeNet::CIM;
     use Data::Dumper;
-    
+
     my $cim = Business::AuthorizeNet::CIM->new( login => $cfg{login}, transactionKey => $cfg{password} );
 
     my @ProfileIds = $cim->getCustomerProfileIds();
@@ -865,17 +878,19 @@ L<LWP::UserAgent> or L<WWW::Mechanize> instance
 
 =head3 createCustomerProfile
 
-Create a new customer profile along with any customer payment profiles and customer shipping addresses for the customer profile.
+Create a new customer profile along with any customer payment profiles and
+customer shipping addresses for the customer profile.
 
     $cim->createCustomerProfile(
         refId => $refId, # Optional
-        
+
         # one of 'merchantCustomerId', 'description', 'email' is required
         merchantCustomerId => $merchantCustomerId,
         description => $description,
         email => $email,
-        
+
         customerType => $customerType, # Optional
+
         billTo => { # Optional, all sub items are Optional
             firstName => $firstName,
             lastName  => $lastName,
@@ -888,14 +903,16 @@ Create a new customer profile along with any customer payment profiles and custo
             phoneNumber => $phoneNumber,
             faxNumber => $faxNumber
         },
+
         # or it uses shipToList address as billTo
         use_shipToList_as_billTo => 1,
-        
+
         creditCard => { # required when the payment profile is credit card
             cardNumber => $cardNumber,
             expirationDate => $expirationDate, # YYYY-MM
             cardCode => $cardCode,  # Optional
         },
+
         bankAccount => { # required when the payment profile is bank account
             accountType => $accountType, # Optional, one of checking, savings, businessChecking
             routingNumber => $routingNumber,
@@ -904,7 +921,7 @@ Create a new customer profile along with any customer payment profiles and custo
             echeckType => $echeckType, # Optionaal, one of CCD, PPD, TEL, WEB
             bankName   => $bankName, # Optional
         },
-        
+
         shipToList => {
             firstName => $firstName,
             lastName  => $lastName,
@@ -917,9 +934,10 @@ Create a new customer profile along with any customer payment profiles and custo
             phoneNumber => $phoneNumber,
             faxNumber => $faxNumber
         },
-        
+
         # or it uses billTo address as shipToList
         use_billTo_as_shipToList => 1,
+
     );
 
 =head3 createCustomerPaymentProfileRequest
@@ -928,7 +946,7 @@ Create a new customer payment profile for an existing customer profile. You can 
 
     $cim->createCustomerPaymentProfileRequest(
         customerProfileId => $customerProfileId, # required
-    
+
         refId => $refId, # Optional
 
         customerType => $customerType, # Optional
@@ -944,7 +962,7 @@ Create a new customer payment profile for an existing customer profile. You can 
             phoneNumber => $phoneNumber,
             faxNumber => $faxNumber
         },
-        
+
         creditCard => { # required when the payment profile is credit card
             cardNumber => $cardNumber,
             expirationDate => $expirationDate, # YYYY-MM
@@ -966,9 +984,9 @@ Create a new customer shipping address for an existing customer profile. You can
 
     $cim->createCustomerShippingAddressRequest(
         customerProfileId => $customerProfileId, # required
-    
+
         refId => $refId, # Optional
-        
+
         firstName => $firstName,
         lastName  => $lastName,
         company   => $company,
@@ -989,7 +1007,7 @@ Create a new payment transaction from an existing customer profile.
         'profileTransAuthCapture', # or others like profileTransAuthOnly
 
         refId => $refId, # Optional, reference id
-        
+
         amount => $amount,
         tax => { # Optional
             amount => $tax_amount,
@@ -1006,7 +1024,7 @@ Create a new payment transaction from an existing customer profile.
             name   => $tax_name,
             description => $tax_description
         },
-        
+
         lineItems => [ { # Optional
             itemId => $itemId,
             name => $name,
@@ -1015,23 +1033,23 @@ Create a new payment transaction from an existing customer profile.
             unitPrice => $unitPrice,
             taxable => $taxable,
         } ],
-    
+
         customerProfileId => $customerProfileId,
         customerPaymentProfileId => $customerPaymentProfileId,
         customerShippingAddressId => $customerShippingAddressId,
-        
+
         extraOptions => $extraOptions, # Optional
-        
+
         ### Only required for profileTransPriorAuthCapture: For Prior Authorization and CaptureTransactions
         ### and profileTransRefund: For Refund Transactions
         ### and profileTransVoid: For Void Transactions
         transId => $transId,
-        
+
         ### Only partly required for profileTransRefund: For Refund Transactions
         creditCardNumberMasked => $creditCardNumberMasked,
         bankRoutingNumberMasked => $bankRoutingNumberMasked,
         bankAccountNumberMasked => $bankAccountNumberMasked,
-        
+
         ### rest are not for profileTransPriorAuthCapture
         order => { # Optional
             invoiceNumber => $invoiceNumber,
@@ -1042,12 +1060,12 @@ Create a new payment transaction from an existing customer profile.
         recurringBilling => 'false', # optional
         cardCode => $cardCode, # Required only when the merchant would like to use the Card Code Verification (CCV) filter
         splitTenderId => $splitTenderId, # Required for second and subsequent transactions related to a partial authorizaqtion transaction.
-        
+
         #### ONLY required for profileTransCaptureOnly: the Capture Only transaction type.
         approvalCode => $approvalCode,
     );
 
-The first argument can be one of 
+The first argument can be one of
 
 =over 4
 
@@ -1079,11 +1097,11 @@ For Void Transactions
         'profileTransVoid', # or others like profileTransAuthOnly
 
         refId => $refId, # Optional, reference id
-        
+
         customerProfileId => $customerProfileId,
         customerPaymentProfileId => $customerPaymentProfileId,
         customerShippingAddressId => $customerShippingAddressId,
-        
+
         extraOptions => $extraOptions, # Optional
 
         transId => $transId,
@@ -1139,9 +1157,9 @@ Update an existing customer profile
 
     $cim->updateCustomerProfile(
         customerProfileId => $customerProfileId,
-        
+
         refId => $refId, # Optional
-        
+
         merchantCustomerId => $merchantCustomerId,
         description => $description,
         email => $email
@@ -1154,9 +1172,9 @@ Update a customer payment profile for an existing customer profile.
     $cim->updateCustomerPaymentProfile(
         customerProfileId => $customerProfileId,
         customerPaymentProfileId => $customerPaymentProfileId,
-        
+
         refId => $refId, # Optional
-        
+
         customerType => $customerType, # Optional
         billTo => { # Optional, all sub items are Optional
             firstName => $firstName,
@@ -1170,7 +1188,7 @@ Update a customer payment profile for an existing customer profile.
             phoneNumber => $phoneNumber,
             faxNumber => $faxNumber
         },
-        
+
         creditCard => { # required when the payment profile is credit card
             cardNumber => $cardNumber,
             expirationDate => $expirationDate, # YYYY-MM
@@ -1193,9 +1211,9 @@ Update a shipping address for an existing customer profile.
     $cim->updateCustomerShippingAddress(
         customerProfileId => $customerProfileId,
         customerAddressId => $customerAddressId,
-        
+
         refId => $refId, # Optional
-        
+
         firstName => $firstName,
         lastName  => $lastName,
         company   => $company,
@@ -1223,7 +1241,7 @@ Verify an existing customer payment profile by generating a test transaction.
         customerProfileId => $customerProfileId,
         customerPaymentProfileId => $customerPaymentProfileId,
         customerShippingAddressId => $customerShippingAddressId,
-        
+
         cardCode => $cardCode, # Optional
     );
 
@@ -1233,7 +1251,7 @@ Fayland Lam <fayland@gmail.com>
 
 =head1 COPYRIGHT AND LICENSE
 
-This software is copyright (c) 2011 by Fayland Lam.
+This software is copyright (c) 2013 by Fayland Lam.
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.

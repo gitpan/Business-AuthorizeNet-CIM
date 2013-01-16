@@ -3,12 +3,12 @@ NAME
     (CIM) Web Services API
 
 VERSION
-    version 0.06
+    version 0.07
 
 SYNOPSIS
         use Business::AuthorizeNet::CIM;
         use Data::Dumper;
-    
+
         my $cim = Business::AuthorizeNet::CIM->new( login => $cfg{login}, transactionKey => $cfg{password} );
 
         my @ProfileIds = $cim->getCustomerProfileIds();
@@ -57,13 +57,14 @@ DESCRIPTION
 
         $cim->createCustomerProfile(
             refId => $refId, # Optional
-        
+
             # one of 'merchantCustomerId', 'description', 'email' is required
             merchantCustomerId => $merchantCustomerId,
             description => $description,
             email => $email,
-        
+
             customerType => $customerType, # Optional
+
             billTo => { # Optional, all sub items are Optional
                 firstName => $firstName,
                 lastName  => $lastName,
@@ -76,14 +77,16 @@ DESCRIPTION
                 phoneNumber => $phoneNumber,
                 faxNumber => $faxNumber
             },
+
             # or it uses shipToList address as billTo
             use_shipToList_as_billTo => 1,
-        
+
             creditCard => { # required when the payment profile is credit card
                 cardNumber => $cardNumber,
                 expirationDate => $expirationDate, # YYYY-MM
                 cardCode => $cardCode,  # Optional
             },
+
             bankAccount => { # required when the payment profile is bank account
                 accountType => $accountType, # Optional, one of checking, savings, businessChecking
                 routingNumber => $routingNumber,
@@ -92,7 +95,7 @@ DESCRIPTION
                 echeckType => $echeckType, # Optionaal, one of CCD, PPD, TEL, WEB
                 bankName   => $bankName, # Optional
             },
-        
+
             shipToList => {
                 firstName => $firstName,
                 lastName  => $lastName,
@@ -105,9 +108,10 @@ DESCRIPTION
                 phoneNumber => $phoneNumber,
                 faxNumber => $faxNumber
             },
-        
+
             # or it uses billTo address as shipToList
             use_billTo_as_shipToList => 1,
+
         );
 
    createCustomerPaymentProfileRequest
@@ -116,7 +120,7 @@ DESCRIPTION
 
         $cim->createCustomerPaymentProfileRequest(
             customerProfileId => $customerProfileId, # required
-    
+
             refId => $refId, # Optional
 
             customerType => $customerType, # Optional
@@ -132,7 +136,7 @@ DESCRIPTION
                 phoneNumber => $phoneNumber,
                 faxNumber => $faxNumber
             },
-        
+
             creditCard => { # required when the payment profile is credit card
                 cardNumber => $cardNumber,
                 expirationDate => $expirationDate, # YYYY-MM
@@ -155,9 +159,9 @@ DESCRIPTION
 
         $cim->createCustomerShippingAddressRequest(
             customerProfileId => $customerProfileId, # required
-    
+
             refId => $refId, # Optional
-        
+
             firstName => $firstName,
             lastName  => $lastName,
             company   => $company,
@@ -177,7 +181,7 @@ DESCRIPTION
             'profileTransAuthCapture', # or others like profileTransAuthOnly
 
             refId => $refId, # Optional, reference id
-        
+
             amount => $amount,
             tax => { # Optional
                 amount => $tax_amount,
@@ -194,7 +198,7 @@ DESCRIPTION
                 name   => $tax_name,
                 description => $tax_description
             },
-        
+
             lineItems => [ { # Optional
                 itemId => $itemId,
                 name => $name,
@@ -203,23 +207,23 @@ DESCRIPTION
                 unitPrice => $unitPrice,
                 taxable => $taxable,
             } ],
-    
+
             customerProfileId => $customerProfileId,
             customerPaymentProfileId => $customerPaymentProfileId,
             customerShippingAddressId => $customerShippingAddressId,
-        
+
             extraOptions => $extraOptions, # Optional
-        
+
             ### Only required for profileTransPriorAuthCapture: For Prior Authorization and CaptureTransactions
             ### and profileTransRefund: For Refund Transactions
             ### and profileTransVoid: For Void Transactions
             transId => $transId,
-        
+
             ### Only partly required for profileTransRefund: For Refund Transactions
             creditCardNumberMasked => $creditCardNumberMasked,
             bankRoutingNumberMasked => $bankRoutingNumberMasked,
             bankAccountNumberMasked => $bankAccountNumberMasked,
-        
+
             ### rest are not for profileTransPriorAuthCapture
             order => { # Optional
                 invoiceNumber => $invoiceNumber,
@@ -230,7 +234,7 @@ DESCRIPTION
             recurringBilling => 'false', # optional
             cardCode => $cardCode, # Required only when the merchant would like to use the Card Code Verification (CCV) filter
             splitTenderId => $splitTenderId, # Required for second and subsequent transactions related to a partial authorizaqtion transaction.
-        
+
             #### ONLY required for profileTransCaptureOnly: the Capture Only transaction type.
             approvalCode => $approvalCode,
         );
@@ -265,11 +269,11 @@ DESCRIPTION
                 'profileTransVoid', # or others like profileTransAuthOnly
 
                 refId => $refId, # Optional, reference id
-        
+
                 customerProfileId => $customerProfileId,
                 customerPaymentProfileId => $customerPaymentProfileId,
                 customerShippingAddressId => $customerShippingAddressId,
-        
+
                 extraOptions => $extraOptions, # Optional
 
                 transId => $transId,
@@ -317,9 +321,9 @@ DESCRIPTION
 
         $cim->updateCustomerProfile(
             customerProfileId => $customerProfileId,
-        
+
             refId => $refId, # Optional
-        
+
             merchantCustomerId => $merchantCustomerId,
             description => $description,
             email => $email
@@ -331,9 +335,9 @@ DESCRIPTION
         $cim->updateCustomerPaymentProfile(
             customerProfileId => $customerProfileId,
             customerPaymentProfileId => $customerPaymentProfileId,
-        
+
             refId => $refId, # Optional
-        
+
             customerType => $customerType, # Optional
             billTo => { # Optional, all sub items are Optional
                 firstName => $firstName,
@@ -347,7 +351,7 @@ DESCRIPTION
                 phoneNumber => $phoneNumber,
                 faxNumber => $faxNumber
             },
-        
+
             creditCard => { # required when the payment profile is credit card
                 cardNumber => $cardNumber,
                 expirationDate => $expirationDate, # YYYY-MM
@@ -369,9 +373,9 @@ DESCRIPTION
         $cim->updateCustomerShippingAddress(
             customerProfileId => $customerProfileId,
             customerAddressId => $customerAddressId,
-        
+
             refId => $refId, # Optional
-        
+
             firstName => $firstName,
             lastName  => $lastName,
             company   => $company,
@@ -399,7 +403,7 @@ DESCRIPTION
             customerProfileId => $customerProfileId,
             customerPaymentProfileId => $customerPaymentProfileId,
             customerShippingAddressId => $customerShippingAddressId,
-        
+
             cardCode => $cardCode, # Optional
         );
 
@@ -407,7 +411,7 @@ AUTHOR
     Fayland Lam <fayland@gmail.com>
 
 COPYRIGHT AND LICENSE
-    This software is copyright (c) 2011 by Fayland Lam.
+    This software is copyright (c) 2013 by Fayland Lam.
 
     This is free software; you can redistribute it and/or modify it under
     the same terms as the Perl 5 programming language system itself.
