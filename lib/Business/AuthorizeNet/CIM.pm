@@ -1,6 +1,6 @@
 package Business::AuthorizeNet::CIM;
 {
-    $Business::AuthorizeNet::CIM::VERSION = '0.07';
+    $Business::AuthorizeNet::CIM::VERSION = '0.08';
 }
 
 # ABSTRACT: Authorize.Net Customer Information Manager (CIM) Web Services API
@@ -136,8 +136,7 @@ sub createCustomerProfile {
 
     $xml = '<?xml version="1.0" encoding="utf-8"?>' . "\n" . $xml;
     print "<!-- $xml -->\n\n" if $self->{debug};
-    my $resp =
-      $self->{ua}
+    my $resp = $self->{ua}
       ->post( $self->{url}, Content => $xml, 'Content-Type' => 'text/xml' );
     print "<!-- " . $resp->content . " -->\n\n" if $self->{debug};
 
@@ -211,8 +210,7 @@ sub createCustomerPaymentProfileRequest {
 
     $xml = '<?xml version="1.0" encoding="utf-8"?>' . "\n" . $xml;
     print "<!-- $xml -->\n\n" if $self->{debug};
-    my $resp =
-      $self->{ua}
+    my $resp = $self->{ua}
       ->post( $self->{url}, Content => $xml, 'Content-Type' => 'text/xml' );
     print "<!-- " . $resp->content . " -->\n\n" if $self->{debug};
 
@@ -248,16 +246,11 @@ sub createCustomerShippingAddressRequest {
     }
 
     $writer->endTag('address');
-
-    if ( $self->{test_mode} ) {
-        $writer->dataElement( 'validationMode', 'testMode' );
-    }
     $writer->endTag('createCustomerShippingAddressRequest');
 
     $xml = '<?xml version="1.0" encoding="utf-8"?>' . "\n" . $xml;
     print "<!-- $xml -->\n\n" if $self->{debug};
-    my $resp =
-      $self->{ua}
+    my $resp = $self->{ua}
       ->post( $self->{url}, Content => $xml, 'Content-Type' => 'text/xml' );
     print "<!-- " . $resp->content . " -->\n\n" if $self->{debug};
 
@@ -373,8 +366,7 @@ sub createCustomerProfileTransaction {
 
     $xml = '<?xml version="1.0" encoding="utf-8"?>' . "\n" . $xml;
     print "<!-- $xml -->\n\n" if $self->{debug};
-    my $resp =
-      $self->{ua}
+    my $resp = $self->{ua}
       ->post( $self->{url}, Content => $xml, 'Content-Type' => 'text/xml' );
     print "<!-- " . $resp->content . " -->\n\n" if $self->{debug};
 
@@ -400,8 +392,7 @@ sub deleteCustomerProfile {
 
     $xml = '<?xml version="1.0" encoding="utf-8"?>' . "\n" . $xml;
     print "<!-- $xml -->\n\n" if $self->{debug};
-    my $resp =
-      $self->{ua}
+    my $resp = $self->{ua}
       ->post( $self->{url}, Content => $xml, 'Content-Type' => 'text/xml' );
     print "<!-- " . $resp->content . " -->\n\n" if $self->{debug};
 
@@ -423,16 +414,11 @@ sub deleteCustomerPaymentProfileRequest {
     $writer->dataElement( 'customerProfileId', $customerProfileId );
     $writer->dataElement( 'customerPaymentProfileId',
         $customerPaymentProfileId );
-
-    if ( $self->{test_mode} ) {
-        $writer->dataElement( 'validationMode', 'testMode' );
-    }
     $writer->endTag('deleteCustomerPaymentProfileRequest');
 
     $xml = '<?xml version="1.0" encoding="utf-8"?>' . "\n" . $xml;
     print "<!-- $xml -->\n\n" if $self->{debug};
-    my $resp =
-      $self->{ua}
+    my $resp = $self->{ua}
       ->post( $self->{url}, Content => $xml, 'Content-Type' => 'text/xml' );
     print "<!-- " . $resp->content . " -->\n\n" if $self->{debug};
 
@@ -453,16 +439,11 @@ sub deleteCustomerShippingAddressRequest {
     $writer->endTag('merchantAuthentication');
     $writer->dataElement( 'customerProfileId', $customerProfileId );
     $writer->dataElement( 'customerAddressId', $customerAddressId );
-
-    if ( $self->{test_mode} ) {
-        $writer->dataElement( 'validationMode', 'testMode' );
-    }
     $writer->endTag('deleteCustomerShippingAddressRequest');
 
     $xml = '<?xml version="1.0" encoding="utf-8"?>' . "\n" . $xml;
     print "<!-- $xml -->\n\n" if $self->{debug};
-    my $resp =
-      $self->{ua}
+    my $resp = $self->{ua}
       ->post( $self->{url}, Content => $xml, 'Content-Type' => 'text/xml' );
     print "<!-- " . $resp->content . " -->\n\n" if $self->{debug};
 
@@ -485,8 +466,7 @@ sub getCustomerProfileIds {
 
     $xml = '<?xml version="1.0" encoding="utf-8"?>' . "\n" . $xml;
     print "<!-- $xml -->\n\n" if $self->{debug};
-    my $resp =
-      $self->{ua}
+    my $resp = $self->{ua}
       ->post( $self->{url}, Content => $xml, 'Content-Type' => 'text/xml' );
     print "<!-- " . $resp->content . " -->\n\n" if $self->{debug};
 
@@ -497,8 +477,8 @@ sub getCustomerProfileIds {
     my $id_num = $d->{ids}->{numericString};
     my @ids =
         ref($id_num) eq 'ARRAY' ? @$id_num
-      : defined $id_num ? ($id_num)
-      :                   ();
+      : defined $id_num         ? ($id_num)
+      :                           ();
 
     return @ids;
 }
@@ -519,8 +499,7 @@ sub getCustomerProfile {
 
     $xml = '<?xml version="1.0" encoding="utf-8"?>' . "\n" . $xml;
     print "<!-- $xml -->\n\n" if $self->{debug};
-    my $resp =
-      $self->{ua}
+    my $resp = $self->{ua}
       ->post( $self->{url}, Content => $xml, 'Content-Type' => 'text/xml' );
     print "<!-- " . $resp->content . " -->\n\n" if $self->{debug};
 
@@ -542,16 +521,11 @@ sub getCustomerPaymentProfileRequest {
     $writer->dataElement( 'customerProfileId', $customerProfileId );
     $writer->dataElement( 'customerPaymentProfileId',
         $customerPaymentProfileId );
-
-    if ( $self->{test_mode} ) {
-        $writer->dataElement( 'validationMode', 'testMode' );
-    }
     $writer->endTag('getCustomerPaymentProfileRequest');
 
     $xml = '<?xml version="1.0" encoding="utf-8"?>' . "\n" . $xml;
     print "<!-- $xml -->\n\n" if $self->{debug};
-    my $resp =
-      $self->{ua}
+    my $resp = $self->{ua}
       ->post( $self->{url}, Content => $xml, 'Content-Type' => 'text/xml' );
     print "<!-- " . $resp->content . " -->\n\n" if $self->{debug};
 
@@ -572,16 +546,11 @@ sub getCustomerShippingAddressRequest {
     $writer->endTag('merchantAuthentication');
     $writer->dataElement( 'customerProfileId', $customerProfileId );
     $writer->dataElement( 'customerAddressId', $customerAddressId );
-
-    if ( $self->{test_mode} ) {
-        $writer->dataElement( 'validationMode', 'testMode' );
-    }
     $writer->endTag('getCustomerShippingAddressRequest');
 
     $xml = '<?xml version="1.0" encoding="utf-8"?>' . "\n" . $xml;
     print "<!-- $xml -->\n\n" if $self->{debug};
-    my $resp =
-      $self->{ua}
+    my $resp = $self->{ua}
       ->post( $self->{url}, Content => $xml, 'Content-Type' => 'text/xml' );
     print "<!-- " . $resp->content . " -->\n\n" if $self->{debug};
 
@@ -614,8 +583,7 @@ sub updateCustomerProfile {
 
     $xml = '<?xml version="1.0" encoding="utf-8"?>' . "\n" . $xml;
     print "<!-- $xml -->\n\n" if $self->{debug};
-    my $resp =
-      $self->{ua}
+    my $resp = $self->{ua}
       ->post( $self->{url}, Content => $xml, 'Content-Type' => 'text/xml' );
     print "<!-- " . $resp->content . " -->\n\n" if $self->{debug};
 
@@ -692,8 +660,7 @@ sub updateCustomerPaymentProfile {
 
     $xml = '<?xml version="1.0" encoding="utf-8"?>' . "\n" . $xml;
     print "<!-- $xml -->\n\n" if $self->{debug};
-    my $resp =
-      $self->{ua}
+    my $resp = $self->{ua}
       ->post( $self->{url}, Content => $xml, 'Content-Type' => 'text/xml' );
     print "<!-- " . $resp->content . " -->\n\n" if $self->{debug};
 
@@ -736,8 +703,7 @@ sub updateCustomerShippingAddress {
 
     $xml = '<?xml version="1.0" encoding="utf-8"?>' . "\n" . $xml;
     print "<!-- $xml -->\n\n" if $self->{debug};
-    my $resp =
-      $self->{ua}
+    my $resp = $self->{ua}
       ->post( $self->{url}, Content => $xml, 'Content-Type' => 'text/xml' );
     print "<!-- " . $resp->content . " -->\n\n" if $self->{debug};
 
@@ -762,8 +728,7 @@ sub updateSplitTenderGroupRequest {
 
     $xml = '<?xml version="1.0" encoding="utf-8"?>' . "\n" . $xml;
     print "<!-- $xml -->\n\n" if $self->{debug};
-    my $resp =
-      $self->{ua}
+    my $resp = $self->{ua}
       ->post( $self->{url}, Content => $xml, 'Content-Type' => 'text/xml' );
     print "<!-- " . $resp->content . " -->\n\n" if $self->{debug};
 
@@ -801,8 +766,7 @@ sub validateCustomerPaymentProfile {
 
     $xml = '<?xml version="1.0" encoding="utf-8"?>' . "\n" . $xml;
     print "<!-- $xml -->\n\n" if $self->{debug};
-    my $resp =
-      $self->{ua}
+    my $resp = $self->{ua}
       ->post( $self->{url}, Content => $xml, 'Content-Type' => 'text/xml' );
     print "<!-- " . $resp->content . " -->\n\n" if $self->{debug};
 
@@ -822,7 +786,7 @@ Business::AuthorizeNet::CIM - Authorize.Net Customer Information Manager (CIM) W
 
 =head1 VERSION
 
-version 0.07
+version 0.08
 
 =head1 SYNOPSIS
 
@@ -1245,9 +1209,19 @@ Verify an existing customer payment profile by generating a test transaction.
         cardCode => $cardCode, # Optional
     );
 
-=head1 AUTHOR
+=head1 AUTHORS
+
+=over 4
+
+=item *
 
 Fayland Lam <fayland@gmail.com>
+
+=item *
+
+Rhesa Rozendaal
+
+=back
 
 =head1 COPYRIGHT AND LICENSE
 

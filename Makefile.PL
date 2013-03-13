@@ -10,7 +10,7 @@ use ExtUtils::MakeMaker 6.30;
 
 my %WriteMakefileArgs = (
   "ABSTRACT" => "Authorize.Net Customer Information Manager (CIM) Web Services API",
-  "AUTHOR" => "Fayland Lam <fayland\@gmail.com>",
+  "AUTHOR" => "Fayland Lam <fayland\@gmail.com>, Rhesa Rozendaal",
   "BUILD_REQUIRES" => {},
   "CONFIGURE_REQUIRES" => {
     "ExtUtils::MakeMaker" => "6.30"
@@ -24,7 +24,7 @@ my %WriteMakefileArgs = (
     "XML::Simple" => 0,
     "XML::Writer" => 0
   },
-  "VERSION" => "0.07",
+  "VERSION" => "0.08",
   "test" => {
     "TESTS" => "t/*.t"
   }
